@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CeCare — Belleza natural con raíces Mexicanas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --brand-green:#2f6b4a;
+      --brand-ocre:#f0a500;
+      --brand-lav:#9b83c6;
+      --paper:#fbf8f2;
+    }
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--paper)}
+    h1,h2,h3{font-family: 'Merriweather', serif}
+    .accent-line{height:6px;background:linear-gradient(90deg,var(--brand-green),var(--brand-ocre));border-radius:4px}
+    .card-shadow{box-shadow:0 8px 20px rgba(47,107,74,0.08)}
+    .hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 10% 20%, rgba(240,165,0,0.04) 0 10%, transparent 30%), radial-gradient(circle at 90% 80%, rgba(155,131,198,0.03) 0 12%, transparent 40%);pointer-events:none}
+  </style>
+</head>
+<body class="text-gray-800">
+  <!-- NAV -->
+  <header class="bg-white sticky top-0 z-40 border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#inicio" class="flex items-center gap-3">
+        <img src="cecare_logo.JPEG" alt="CeCare Logo" class="w-20 h-20 object-contain">
+        <div>
+          <h1 class="text-xl font-bold text--brand">CeCare</h1>
+          <p class="text-xs text-gray-500 -mt-1">Belleza Natural • Tradición Mexicana</p>
+        </div>
+      </a>
+      <nav class="hidden md:flex gap-6 items-center text-sm font-medium">
+        <a href="#inicio" class="hover:text-emerald-700">Inicio</a>
+        <a href="#productos" class="hover:text-emerald-700">Productos</a>
+        <a href="#quienes-somos" class="hover:text-emerald-700">Quiénes Somos</a>
+        <a href="#ingredientes" class="hover:text-emerald-700">Ingredientes</a>
+        <a href="#contacto" class="hover:text-emerald-700">Contacto</a>
+        <button onclick="mostrarLogin()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Iniciar Sesión</button>
+        <button onclick="mostrarCarrito()" class="relative bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600">
+          🛒 Carrito
+          <span id="contadorCarrito" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hidden">0</span>
+        </button>
+      </nav>
+      <button id="menuBtn" class="md:hidden p-2 rounded bg-gray-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobileMenu" class="md:hidden hidden border-t border-gray-100 bg-white">
+      <div class="px-6 py-4 flex flex-col gap-3">
+        <a href="#inicio">Inicio</a>
+        <a href="#productos">Productos</a>
+        <a href="#quienes-somos">Quiénes Somos</a>
+        <a href="#ingredientes">Ingredientes</a>
+        <a href="#contacto">Contacto</a>
+        <button onclick="mostrarLogin()" class="bg-green-600 text-white px-4 py-2 rounded text-left">Iniciar Sesión</button>
+        <button onclick="mostrarCarrito()" class="bg-amber-500 text-white px-4 py-2 rounded text-left">🛒 Carrito</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOGIN MODAL - SUPER COMPACTO -->
+  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-2">
+    <div class="bg-white rounded-lg p-4 w-full max-w-xs mx-auto">
+      <button onclick="cerrarLogin()" class="float-right text-gray-600 text-sm">✕</button>
+      <h3 class="text-lg font-semibold text-center">Iniciar Sesión</h3>
+      <form onsubmit="iniciarSesion(event)" class="mt-3 space-y-2">
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Usuario</label>
+          <input type="text" id="usuario" class="mt-1 p-1.5 border rounded w-full text-sm" placeholder="admin o cliente" required />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Contraseña</label>
+          <input type="password" id="password" class="mt-1 p-1.5 border rounded w-full text-sm" required />
+        </div>
+        <button type="submit" class="mt-2 bg-green-700 text-white p-1.5 rounded w-full text-sm">Entrar</button>
+      </form>
+      <p class="mt-2 text-xs text-gray-600 text-center">
+        admin/230691<br>cliente/12356
+      </p>
+    </div>
+  </div>
+
+  <!-- CARRITO - ADAPTABLE -->
+  <div id="carritoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-2">
+    <div class="bg-white rounded-lg p-3 w-full max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-semibold">Carrito</h3>
+        <button onclick="cerrarCarrito()" class="text-gray-600 text-sm">✕</button>
+      </div>
+      <div id="listaCarrito" class="space-y-2 max-h-64 overflow-y-auto text-sm">
+      </div>
+      <div id="carritoVacio" class="text-center py-4 text-gray-500 text-sm">
+        <p>Tu carrito está vacío</p>
+      </div>
+      <div id="totalCarrito" class="mt-3 border-t pt-2 hidden">
+        <div class="flex justify-between items-center font-semibold text-sm">
+          <span>Total:</span>
+          <span id="totalPrecio">$0 MXN</span>
+        </div>
+        <button onclick="procesarCompra()" class="mt-2 bg-green-700 text-white p-1.5 rounded w-full text-sm hover:bg-green-800">
+          Proceder al Pago
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section id="inicio" class="hero relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div>
+        <p class="text-sm font-semibold text-amber-600">Artesanal • Natural • Mexicana</p>
+        <h2 class="text-4xl md:text-5xl font-black leading-tight mt-4">Belleza natural con raíces mexicanas</h2>
+        <p class="mt-4 text-gray-700 max-w-lg">En nuestra empresa creemos en el poder de las plantas que han acompañado a las Familias Mexicanas por generaciones.
+Cada uno de nuestros productos están elaborado de manera consciente, respetando la naturaleza y aprovechando sus propiedades de forma responsable. 
+Combinamos tradición, conocimiento y procesos artesanales para ofrecerte fórmulas naturales, efectivas y llenas de identidad.
+Aquí empieza un camino de bienestar que nace en México y está hecho para ti.</p>
+        <div class="mt-6 flex gap-3">
+          <a href="#productos" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded font-semibold shadow">Ver Productos</a>
+          <a href="#quienes-somos" class="border border-amber-400 text-amber-700 px-5 py-2 rounded">Nuestra Historia</a>
+        </div>
+      </div>
+      <div class="relative">
+        <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1000&q=80" alt="flores" class="rounded-xl shadow-lg object-cover w-full h-96"/>
+      </div>
+    </div>
+    <div class="accent-line"></div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section id="productos" class="max-w-6xl mx-auto px-6 py-12">
+    <div class="flex items-center justify-between">
+      <h3 class="text-2xl font-bold">Nuestros Productos</h3>
+      <p class="text-sm text-gray-600">Artesanales • Sustentables • Hecho en México</p>
+    </div>
+    
+    <div id="listaProductos" class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    </div>
+
+    <!-- Botón para administradores - ACTUALIZADO CON BOTÓN DE RESET -->
+    <div id="adminPanel" class="mt-8 hidden">
+      <h4 class="text-lg font-semibold mb-4">Panel de Administrador</h4>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="mostrarFormularioProducto()" class="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600">Agregar Producto</button>
+        <button onclick="resetearBaseDeDatos()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Resetear Productos</button>
+      </div>
+      <p class="text-xs text-gray-600 mt-2">Usa "Resetear Productos" si las imágenes no se ven</p>
+    </div>
+  </section>
+
+  <!-- AGREGAR/EDITAR PRODUCTO - COMPACTO -->
+  <div id="formProducto" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-2">
+    <div class="bg-white rounded-lg p-3 w-full max-w-2xl mx-auto max-h-[95vh] overflow-hidden flex flex-col">
+      <div class="flex justify-between items-center mb-2">
+        <h3 id="formTitle" class="text-lg font-semibold">Agregar Producto</h3>
+        <button onclick="cerrarFormularioProducto()" class="text-gray-600 text-sm">✕</button>
+      </div>
+      <form onsubmit="guardarProductoForm(event)" class="overflow-y-auto flex-1 space-y-2 text-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Nombre</label>
+            <input type="text" id="prodNombre" class="mt-1 p-1.5 border rounded w-full text-sm" required />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Precio</label>
+            <input type="number" id="prodPrecio" class="mt-1 p-1.5 border rounded w-full text-sm" step="0.01" required />
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Descripción</label>
+          <textarea id="prodDesc" class="mt-1 p-1.5 border rounded w-full text-sm" rows="2" required></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Imagen URL</label>
+          <input type="text" id="prodImagen" class="mt-1 p-1.5 border rounded w-full text-sm" required />
+          <p class="text-xs text-gray-500 mt-1">Ejemplo: placeholder.png (si está en la misma carpeta)</p>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Formulación</label>
+          <textarea id="prodFormulacion" class="mt-1 p-1.5 border rounded w-full text-sm" rows="2" required></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Características</label>
+          <textarea id="prodCaracteristicas" class="mt-1 p-1.5 border rounded w-full text-sm" rows="2" required></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Usos Terapéuticos</label>
+          <textarea id="prodUsos" class="mt-1 p-1.5 border rounded w-full text-sm" rows="2" required></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Efectos Secundarios</label>
+          <textarea id="prodEfectos" class="mt-1 p-1.5 border rounded w-full text-sm" rows="2" required></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Ingredientes</label>
+          <textarea id="prodIngredientes" class="mt-1 p-1.5 border rounded w-full text-sm" rows="2" required></textarea>
+        </div>
+        
+        <input type="hidden" id="prodId" value="">
+        
+        <button type="submit" class="bg-green-700 text-white p-1.5 rounded w-full text-sm mt-2">
+          <span id="submitButtonText">Guardar Producto</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- QUIÉNES SOMOS - ACTUALIZADO Y MEJORADO -->
+  <section id="quienes-somos" class="bg-amber-50 py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <h3 class="text-3xl font-bold text-center mb-8">Quiénes Somos</h3>
+      
+      <div class="flex justify-center mb-8">
+        <div class="bg-white rounded-lg p-1 flex gap-1">
+          <button onclick="mostrarSubseccion('quienes-somos-texto')" class="px-4 py-2 rounded hover:bg-amber-100 transition subseccion-btn active">Quiénes Somos</button>
+          <button onclick="mostrarSubseccion('nuestra-historia')" class="px-4 py-2 rounded hover:bg-amber-100 transition subseccion-btn">Nuestra Historia</button>
+          <button onclick="mostrarSubseccion('vision')" class="px-4 py-2 rounded hover:bg-amber-100 transition subseccion-btn">Visión</button>
+          <button onclick="mostrarSubseccion('mision')" class="px-4 py-2 rounded hover:bg-amber-100 transition subseccion-btn">Misión</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-8 card-shadow">
+        <!-- Quiénes Somos - ACTUALIZADO -->
+        <div id="quienes-somos-texto" class="subseccion-contenido">
+          <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h4 class="text-2xl font-bold text-amber-700 mb-4">Conoce CeCare</h4>
+              <p class="text-gray-700">CeCare es una empresa mexicana innovadora fundada por jóvenes emprendedores apasionados por la belleza natural y la sostenibilidad. Combinamos el conocimiento científico con la riqueza de la herbolaria mexicana para crear productos de cuidado personal efectivos y conscientes.</p>
+              <p class="mt-4 text-gray-700">Nuestro equipo está formado por químicos farmacéuticos, diseñadores y especialistas en marketing que comparten la visión de revolucionar la industria cosmética con fórmulas transparentes y resultados comprobables.</p>
+              <ul class="mt-4 text-gray-700 space-y-2">
+                <li>• <strong>Innovación:</strong> Investigamos constantemente nuevas formulaciones</li>
+                <li>• <strong>Transparencia:</strong> Sabes exactamente qué contiene cada producto</li>
+                <li>• <strong>Sostenibilidad:</strong> Empaques eco-friendly y procesos responsables</li>
+              </ul>
+            </div>
+            <div>
+              <img src="https://images.unsplash.com/photo-1556760544-74068565f05c?auto=format&fit=crop&w=800&q=60" alt="Equipo CeCare" class="rounded-xl w-full object-cover h-64">
+            </div>
+          </div>
+        </div>
+
+        <!-- Nuestra Historia - ACTUALIZADA Y MEJOR -->
+        <div id="nuestra-historia" class="subseccion-contenido hidden">
+          <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h4 class="text-2xl font-bold text-amber-700 mb-4">Nuestra Historia</h4>
+              <p class="text-gray-700">CeCare nació en 2022 cuando un grupo de estudiantes de química y diseño se unió para crear una alternativa real a los productos de belleza convencionales. Frustrados por la falta de transparencia en la industria y el greenwashing, decidieron tomar acción.</p>
+              <p class="mt-4 text-gray-700">Comenzamos en un pequeño laboratorio universitario, experimentando con plantas mexicanas subutilizadas. Después de meses de investigación y pruebas, desarrollamos nuestras primeras fórmulas que hoy son la base de nuestros productos estrella.</p>
+              <ul class="mt-4 text-gray-700 space-y-2">
+                <li>• <strong>2022:</strong> Fundación e investigación inicial</li>
+                <li>• <strong>2023:</strong> Lanzamiento de primera línea de productos</li>
+                <li>• <strong>2024:</strong> Expansión a mercados nacionales</li>
+              </ul>
+            </div>
+            <div>
+              <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=800&q=60" alt="Laboratorio CeCare" class="rounded-xl w-full object-cover h-64">
+            </div>
+          </div>
+        </div>
+
+        <!-- Visión - ACTUALIZADA -->
+        <div id="vision" class="subseccion-contenido hidden">
+          <div class="text-center max-w-3xl mx-auto">
+            <h4 class="text-2xl font-bold text-amber-700 mb-4">Nuestra Visión</h4>
+            <p class="text-gray-700 text-lg">Ser la marca líder en productos de belleza natural en México, reconocida por nuestra innovación, transparencia y compromiso con la sostenibilidad.</p>
+            <p class="mt-4 text-gray-700">Visualizamos un futuro donde los consumidores tengan acceso a productos efectivos que respeten su piel y el medio ambiente, donde la belleza y la responsabilidad vayan de la mano.</p>
+            <div class="mt-6">
+              <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=60" alt="Visión CeCare" class="rounded-xl w-full max-w-md mx-auto object-cover h-48">
+            </div>
+          </div>
+        </div>
+
+        <!-- Misión - ACTUALIZADA -->
+        <div id="mision" class="subseccion-contenido hidden">
+          <div class="text-center max-w-3xl mx-auto">
+            <h4 class="text-2xl font-bold text-amber-700 mb-4">Nuestra Misión</h4>
+            <p class="text-gray-700 text-lg">Crear productos de belleza innovadores que combinen la ciencia moderna con la riqueza de la herbolaria mexicana, ofreciendo soluciones efectivas, transparentes y sostenibles.</p>
+            <p class="mt-4 text-gray-700">Nos comprometemos a educar a nuestros consumidores, promover prácticas empresariales responsables y contribuir al desarrollo de la industria cosmética mexicana.</p>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+              <div class="bg-amber-50 p-4 rounded-lg">
+                <h5 class="font-semibold text-amber-700">💡 Innovación</h5>
+                <p class="text-sm text-gray-600 mt-1">Investigación constante en nuevas formulaciones</p>
+              </div>
+              <div class="bg-green-50 p-4 rounded-lg">
+                <h5 class="font-semibold text-green-700">🌱 Sostenibilidad</h5>
+                <p class="text-sm text-gray-600 mt-1">Procesos y empaques responsables</p>
+              </div>
+              <div class="bg-purple-50 p-4 rounded-lg">
+                <h5 class="font-semibold text-purple-700">🔬 Calidad</h5>
+                <p class="text-sm text-gray-600 mt-1">Estándares científicos rigurosos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- INGREDIENTES -->
+  <section id="ingredientes" class="max-w-6xl mx-auto px-6 py-12">
+    <h3 class="text-2xl font-bold text-center">Ingredientes Clave</h3>
+    <p class="text-center text-gray-600 mt-2 max-w-2xl mx-auto">Seleccionamos cempasúchil, romero y lavanda por sus propiedades tradicionales para el cuidado de la piel y el cabello.</p>
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-xl card-shadow text-center">
+        <div class="w-20 h-20 mx-auto rounded-full bg-amber-200 flex items-center justify-center text-2xl">🏵️</div>
+        <h4 class="mt-4 font-semibold">Cempasúchil</h4>
+        <p class="mt-2 text-sm text-gray-600">Propiedades regeneradoras y calmantes. Uso tópico para ayudar en la recuperación de la piel.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl card-shadow text-center">
+        <div class="w-20 h-20 mx-auto rounded-full bg-green-200 flex items-center justify-center text-2xl">🌿</div>
+        <h4 class="mt-4 font-semibold">Romero</h4>
+        <p class="mt-2 text-sm text-gray-600">Estimula el cuero cabelludo, fortifica y aporta un aroma herbal único.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl card-shadow text-center">
+        <div class="w-20 h-20 mx-auto rounded-full bg-purple-200 flex items-center justify-center text-2xl">💜</div>
+        <h4 class="mt-4 font-semibold">Lavanda</h4>
+        <p class="mt-2 text-sm text-gray-600">Relajante y calmante, ideal para hidratación nocturna y cuidado sensible.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h3 class="text-2xl font-bold">Contacto</h3>
+        <p class="mt-2 text-gray-700">¿Dudas o pedidos al mayoreo? Escríbenos o visítanos:</p>
+        <ul class="mt-4 text-gray-700 space-y-2">
+          <li>📍  Av Candiles 317, Valle Real Residencial, 76903 Candiles, Qro.</li>
+          <li>✉️ cecarecontacto@gmail.com</li>
+        </ul>
+        <div class="mt-6 flex gap-3">
+          <a href="#" class="bg-amber-500 text-white px-4 py-2 rounded">Instagram</a>
+        </div>
+        <div class="mt-8 p-4 bg-green-50 rounded-lg">
+          <p class="text-sm text-gray-700 mb-2">🌐 <strong>Accede a nuestra página web:</strong></p>
+          <a href="https://cecare.com" class="text-green-700 font-semibold hover:underline" target="_blank">
+            https://cecare.com
+          </a>
+        </div>
+      </div>
+      <div>
+        <form class="bg-white p-6 rounded-xl card-shadow" onsubmit="event.preventDefault(); alert('Gracias, mensaje enviado!')">
+          <label class="block text-sm font-medium text-gray-700">Nombre</label>
+          <input required class="mt-1 p-2 border rounded w-full" placeholder="Tu nombre" />
+          <label class="block text-sm font-medium text-gray-700 mt-3">Correo</label>
+          <input type="email" required class="mt-1 p-2 border rounded w-full" placeholder="correo@ejemplo.com" />
+          <label class="block text-sm font-medium text-gray-700 mt-3">Mensaje</label>
+          <textarea required class="mt-1 p-2 border rounded w-full" rows="4" placeholder="¿En qué te podemos ayudar?"></textarea>
+          <button class="mt-4 bg-green-700 text-white px-4 py-2 rounded">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DE PRODUCTO - COMPACTO -->
+  <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-2">
+    <div class="bg-white rounded-lg p-3 w-full max-w-lg mx-auto max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="flex justify-between items-start mb-2">
+        <h4 id="modalTitle" class="text-lg font-semibold pr-2"></h4>
+        <button onclick="closeModal()" class="text-gray-600 text-sm flex-shrink-0">✕</button>
+      </div>
+      <div id="modalContent" class="overflow-y-auto flex-1 text-sm">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== BASE DE DATOS SIMPLE ==========
+    let productos = JSON.parse(localStorage.getItem('productos')) || [
+      {
+        id: 1,
+        nombre: "Herbal Shampoo de romero",
+        descripcion: "Limpieza suave, fortalece el folículo y deja aroma herbal.",
+        precio: 85.00,
+        imagen: "shampoo.png",   
+        formulacion: "Aqua, Rosmarinus Officinalis, Glicerina, Cocamidopropil Betaina",
+        caracteristicas: "Textura líquida, aroma herbal, pH balanceado, libre de parabenos",
+        usos_terapeuticos: "Fortalece cabello, estimula crecimiento, controla caspa",
+        efectos_secundarios: "En casos raros puede causar irritación en pieles sensibles",
+        ingredientes: "Romero, Coco betanie, Glicerina vegetal, Sal fina"
+      },
+      {
+        id: 2,
+        nombre: "Lumina Pomada de cempasúchil",
+        descripcion: "Propiedades calmantes y regeneradoras para la piel.",
+        precio: 120.00,
+        imagen: "pomada.png",   
+        formulacion: "Cera de abeja, Aceite de oliva, Tagetes Erecta, Vitamina E",
+        caracteristicas: "Textura cremosa, color amarillo natural, absorción rápida",
+        usos_terapeuticos: "Calma irritaciones, regenera piel, propiedades antiinflamatorias",
+        efectos_secundarios: "Puede causar sensibilidad a la luz solar en algunas personas",
+        ingredientes: "Cempasúchil, Aceite de oliva, Té verde, Cera de abeja"
+      },
+      {
+        id: 3,
+        nombre: "Lavanda lunar Crema de lavanda", 
+        descripcion: "Hidratación nocturna con aroma relajante de lavanda.",
+        precio: 98.00,
+        imagen: "crema.png",   
+        formulacion: "Aqua, Lavandula Angustifolia, Glicerina, Manteca de karité",
+        caracteristicas: "Textura ligera, aroma relajante, hidratación profunda",
+        usos_terapeuticos: "Hidratación profunda, relajante, cuidado piel sensible",
+        efectos_secundarios: "Puede causar reacciones alérgicas en personas sensibles a la lavanda",
+        ingredientes: "Lavanda, Aceite vegetal, Cera de abeja"
+      }
+    ];
+
+    let usuarioLogueado = null;
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+    // ========== FUNCIÓN PARA RESETEAR BASE DE DATOS ==========
+    function resetearBaseDeDatos() {
+      if (confirm('¿Estás seguro de resetear todos los productos a los valores iniciales? Esto borrará cualquier producto que hayas agregado.')) {
+        localStorage.removeItem('productos'); // Elimina los productos guardados
+        localStorage.removeItem('carrito');   // Elimina el carrito
+        location.reload(); // Recarga la página
+      }
+    }
+
+    // ========== FUNCIONES PARA QUIÉNES SOMOS ==========
+    function mostrarSubseccion(id) {
+      document.querySelectorAll('.subseccion-contenido').forEach(div => {
+        div.classList.add('hidden');
+      });
+      
+      document.querySelectorAll('.subseccion-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-amber-500', 'text-white');
+        btn.classList.add('hover:bg-amber-100');
+      });
+      
+      document.getElementById(id).classList.remove('hidden');
+      
+      event.target.classList.add('active', 'bg-amber-500', 'text-white');
+      event.target.classList.remove('hover:bg-amber-100');
+    }
+
+    // ========== SISTEMA DE EDICIÓN DE PRODUCTOS ==========
+    
+    function editarProducto(id) {
+      const producto = productos.find(p => p.id === id);
+      if (!producto) return;
+      
+      document.getElementById('prodId').value = producto.id;
+      document.getElementById('prodNombre').value = producto.nombre;
+      document.getElementById('prodDesc').value = producto.descripcion;
+      document.getElementById('prodPrecio').value = producto.precio;
+      document.getElementById('prodImagen').value = producto.imagen;
+      document.getElementById('prodFormulacion').value = producto.formulacion;
+      document.getElementById('prodCaracteristicas').value = producto.caracteristicas;
+      document.getElementById('prodUsos').value = producto.usos_terapeuticos;
+      document.getElementById('prodEfectos').value = producto.efectos_secundarios;
+      document.getElementById('prodIngredientes').value = producto.ingredientes;
+      
+      document.getElementById('formTitle').textContent = 'Editar Producto';
+      document.getElementById('submitButtonText').textContent = 'Actualizar Producto';
+      
+      document.getElementById('formProducto').classList.remove('hidden');
+      document.getElementById('formProducto').classList.add('flex');
+      
+      closeModal();
+    }
+
+    function guardarProductoForm(event) {
+      event.preventDefault();
+      
+      const productoId = document.getElementById('prodId').value;
+      const esEdicion = productoId !== '';
+      
+      const productoData = {
+        nombre: document.getElementById('prodNombre').value,
+        descripcion: document.getElementById('prodDesc').value,
+        precio: parseFloat(document.getElementById('prodPrecio').value),
+        imagen: document.getElementById('prodImagen').value,
+        formulacion: document.getElementById('prodFormulacion').value,
+        caracteristicas: document.getElementById('prodCaracteristicas').value,
+        usos_terapeuticos: document.getElementById('prodUsos').value,
+        efectos_secundarios: document.getElementById('prodEfectos').value,
+        ingredientes: document.getElementById('prodIngredientes').value
+      };
+      
+      if (esEdicion) {
+        const index = productos.findIndex(p => p.id === parseInt(productoId));
+        if (index !== -1) {
+          productos[index] = { ...productos[index], ...productoData };
+          alert('Producto actualizado correctamente');
+        }
+      } else {
+        const nuevoProducto = {
+          id: Math.max(...productos.map(p => p.id)) + 1,
+          ...productoData
+        };
+        productos.push(nuevoProducto);
+        alert('Producto agregado correctamente');
+      }
+      
+      guardarProductos();
+      cargarProductos();
+      cerrarFormularioProducto();
+    }
+
+    function cerrarFormularioProducto() {
+      document.getElementById('formProducto').classList.add('hidden');
+      document.getElementById('formProducto').classList.remove('flex');
+      
+      document.getElementById('prodId').value = '';
+      document.getElementById('formTitle').textContent = 'Agregar Producto';
+      document.getElementById('submitButtonText').textContent = 'Guardar Producto';
+      document.querySelector('#formProducto form').reset();
+    }
+
+    function mostrarFormularioProducto() {
+      if (usuarioLogueado?.tipo !== 'admin') {
+        alert('Solo los administradores pueden agregar productos');
+        return;
+      }
+      
+      document.getElementById('prodId').value = '';
+      document.getElementById('formTitle').textContent = 'Agregar Producto';
+      document.getElementById('submitButtonText').textContent = 'Guardar Producto';
+      document.querySelector('#formProducto form').reset();
+      
+      document.getElementById('formProducto').classList.remove('hidden');
+      document.getElementById('formProducto').classList.add('flex');
+    }
+
+    // ========== FUNCIONES PRINCIPALES ==========
+
+    function guardarProductos() {
+      localStorage.setItem('productos', JSON.stringify(productos));
+    }
+
+    function cargarProductos() {
+  const lista = document.getElementById('listaProductos');
+  lista.innerHTML = '';
+  
+  productos.forEach(producto => {
+    lista.innerHTML += `
+      <article class="bg-white rounded-xl p-5 card-shadow">
+        <!-- CONTENEDOR FLEXIBLE PARA IMAGEN -->
+        <div class="w-full min-h-[200px] max-h-[300px] flex items-center justify-center overflow-hidden rounded-md bg-gray-50">
+          <img src="${producto.imagen}" alt="${producto.nombre}" 
+               class="w-full h-full object-contain max-w-full max-h-full"
+               onerror="this.src='https://via.placeholder.com/400x300/4CAF50/white?text=Imagen+No+Disponible'">
+        </div>
+        <h4 class="mt-4 font-semibold text-lg">${producto.nombre}</h4>
+        <p class="text-sm text-gray-600 mt-1">${producto.descripcion}</p>
+        <div class="mt-4 flex items-center justify-between">
+          <div>
+            <p class="text-amber-600 font-bold">$${producto.precio} MXN</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800" onclick="verProducto(${producto.id})">Ver</button>
+            <button class="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600" onclick="agregarAlCarrito(${producto.id})">Agregar</button>
+          </div>
+        </div>
+      </article>
+    `;
+  });
+}
+    function verProducto(id) {
+      const producto = productos.find(p => p.id === id);
+      if (!producto) return;
+      
+      document.getElementById('modalTitle').textContent = producto.nombre;
+      document.getElementById('modalContent').innerHTML = `
+        <img src="${producto.imagen}" alt="${producto.nombre}" 
+             class="w-full h-48 object-cover rounded-md"
+             onerror="this.src='https://via.placeholder.com/400x300/4CAF50/white?text=Imagen+No+Disponible'">
+        <p class="mt-3 text-gray-700 text-sm">${producto.descripcion}</p>
+        <p class="mt-2 font-semibold text-amber-600 text-sm">Precio: $${producto.precio} MXN</p>
+        
+        <div class="mt-3">
+          <h5 class="font-semibold text-sm">Formulación:</h5>
+          <p class="text-xs text-gray-600 mt-1">${producto.formulacion}</p>
+        </div>
+        
+        <div class="mt-2">
+          <h5 class="font-semibold text-sm">Características:</h5>
+          <p class="text-xs text-gray-600 mt-1">${producto.caracteristicas}</p>
+        </div>
+        
+        <div class="mt-2">
+          <h5 class="font-semibold text-sm">Usos terapéuticos:</h5>
+          <p class="text-xs text-gray-600 mt-1">${producto.usos_terapeuticos}</p>
+        </div>
+        
+        <div class="mt-2">
+          <h5 class="font-semibold text-sm">Efectos secundarios:</h5>
+          <p class="text-xs text-gray-600 mt-1">${producto.efectos_secundarios}</p>
+        </div>
+        
+        <div class="mt-2">
+          <h5 class="font-semibold text-sm">Ingredientes principales:</h5>
+          <p class="text-xs text-gray-600 mt-1">${producto.ingredientes}</p>
+        </div>
+        
+        <div class="mt-4 flex gap-2">
+          <button onclick="agregarAlCarrito(${producto.id})" class="bg-amber-500 text-white px-3 py-1 rounded hover:bg-amber-600 flex-1 text-sm">
+            Agregar al Carrito
+          </button>
+        </div>
+        
+        ${usuarioLogueado?.tipo === 'admin' ? `
+          <div class="mt-3 flex gap-2">
+            <button onclick="editarProducto(${producto.id})" class="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600">Editar</button>
+            <button onclick="eliminarProducto(${producto.id})" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">Eliminar</button>
+          </div>
+        ` : ''}
+      `;
+      
+      document.getElementById('productModal').classList.remove('hidden');
+      document.getElementById('productModal').classList.add('flex');
+    }
+
+    // ========== SISTEMA DE CARRITO DE COMPRAS ==========
+
+    function agregarAlCarrito(productoId) {
+      const producto = productos.find(p => p.id === productoId);
+      if (!producto) return;
+
+      const itemExistente = carrito.find(item => item.id === productoId);
+      
+      if (itemExistente) {
+        itemExistente.cantidad += 1;
+      } else {
+        carrito.push({
+          ...producto,
+          cantidad: 1
+        });
+      }
+      
+      guardarCarrito();
+      actualizarContadorCarrito();
+      alert('Producto agregado al carrito');
+    }
+
+    function guardarCarrito() {
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+    }
+
+    function actualizarContadorCarrito() {
+      const contador = document.getElementById('contadorCarrito');
+      const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+      
+      if (totalItems > 0) {
+        contador.textContent = totalItems;
+        contador.classList.remove('hidden');
+      } else {
+        contador.classList.add('hidden');
+      }
+    }
+
+    function mostrarCarrito() {
+      const listaCarrito = document.getElementById('listaCarrito');
+      const carritoVacio = document.getElementById('carritoVacio');
+      const totalCarrito = document.getElementById('totalCarrito');
+      const totalPrecio = document.getElementById('totalPrecio');
+
+      if (carrito.length === 0) {
+        listaCarrito.innerHTML = '';
+        carritoVacio.classList.remove('hidden');
+        totalCarrito.classList.add('hidden');
+      } else {
+        carritoVacio.classList.add('hidden');
+        totalCarrito.classList.remove('hidden');
+        
+        listaCarrito.innerHTML = '';
+        let total = 0;
+
+        carrito.forEach((item, index) => {
+          const subtotal = item.precio * item.cantidad;
+          total += subtotal;
+
+          listaCarrito.innerHTML += `
+            <div class="flex items-center justify-between border-b pb-2">
+              <div class="flex items-center gap-3">
+                <img src="${item.imagen}" alt="${item.nombre}" class="w-12 h-12 object-cover rounded"
+                     onerror="this.src='https://via.placeholder.com/100x100/4CAF50/white?text=Imagen'">
+                <div>
+                  <h5 class="font-semibold text-sm">${item.nombre}</h5>
+                  <p class="text-amber-600 text-xs">$${item.precio} MXN</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="cambiarCantidad(${index}, -1)" class="bg-gray-200 w-6 h-6 rounded text-xs">-</button>
+                <span class="mx-1 text-sm">${item.cantidad}</span>
+                <button onclick="cambiarCantidad(${index}, 1)" class="bg-gray-200 w-6 h-6 rounded text-xs">+</button>
+                <button onclick="eliminarDelCarrito(${index})" class="bg-red-500 text-white w-6 h-6 rounded ml-1 text-xs">×</button>
+              </div>
+            </div>
+          `;
+        });
+
+        totalPrecio.textContent = `$${total.toFixed(2)} MXN`;
+      }
+
+      document.getElementById('carritoModal').classList.remove('hidden');
+      document.getElementById('carritoModal').classList.add('flex');
+    }
+
+    function cerrarCarrito() {
+      document.getElementById('carritoModal').classList.add('hidden');
+      document.getElementById('carritoModal').classList.remove('flex');
+    }
+
+    function cambiarCantidad(index, cambio) {
+      carrito[index].cantidad += cambio;
+      
+      if (carrito[index].cantidad <= 0) {
+        carrito.splice(index, 1);
+      }
+      
+      guardarCarrito();
+      actualizarContadorCarrito();
+      mostrarCarrito();
+    }
+
+    function eliminarDelCarrito(index) {
+      carrito.splice(index, 1);
+      guardarCarrito();
+      actualizarContadorCarrito();
+      mostrarCarrito();
+    }
+
+    function procesarCompra() {
+      if (carrito.length === 0) {
+        alert('El carrito está vacío');
+        return;
+      }
+      
+      alert('¡Compra procesada! Gracias por tu pedido.');
+      carrito = [];
+      guardarCarrito();
+      actualizarContadorCarrito();
+      cerrarCarrito();
+    }
+
+    // ========== SISTEMA DE LOGIN ==========
+
+    function mostrarLogin() {
+      document.getElementById('loginModal').classList.remove('hidden');
+      document.getElementById('loginModal').classList.add('flex');
+    }
+
+    function cerrarLogin() {
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('flex');
+    }
+
+    function iniciarSesion(event) {
+      event.preventDefault();
+      const usuario = document.getElementById('usuario').value;
+      const password = document.getElementById('password').value;
+      
+      if (usuario === 'admin' && password === '230691') {
+        usuarioLogueado = { nombre: 'Administrador', tipo: 'admin' };
+      } else if (usuario === 'cliente' && password === '12356') {
+        usuarioLogueado = { nombre: 'Cliente', tipo: 'cliente' };
+      }
+      
+      if (usuarioLogueado) {
+        alert(`Bienvenido ${usuarioLogueado.nombre}`);
+        cerrarLogin();
+        actualizarInterfaz();
+      } else {
+        alert('Usuario o contraseña incorrectos');
+      }
+    }
+
+    function actualizarInterfaz() {
+      const adminPanel = document.getElementById('adminPanel');
+      if (usuarioLogueado?.tipo === 'admin') {
+        adminPanel.classList.remove('hidden');
+      } else {
+        adminPanel.classList.add('hidden');
+      }
+    }
+
+    function eliminarProducto(id) {
+      if (confirm('¿Estás seguro de eliminar este producto?')) {
+        productos = productos.filter(p => p.id !== id);
+        guardarProductos();
+        cargarProductos();
+        closeModal();
+        alert('Producto eliminado');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').classList.add('hidden');
+      document.getElementById('productModal').classList.remove('flex');
+    }
+
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn?.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+    // ========== INICIALIZACIÓN ==========
+    guardarProductos();
+    cargarProductos();
+    actualizarContadorCarrito();
+  </script>
+</body>
+</html>
